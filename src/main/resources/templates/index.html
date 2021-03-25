@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration and Login App</title>
+
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+
+</head>
+
+<body>
+<!-- create navigation bar ( header) -->
+
+                <li sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Logout</a></li>
+
+<th:block th:if="${#lists.isEmpty(check)}">
+    <h5>No contacts</h5>
+</th:block>
+
+<th:block th:unless="${#lists.isEmpty(check)}">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th></th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="convt : ${check}">
+            <td th:text="${convt.id}"></td>
+            <td th:text="${convt.user1}"></td>
+            <td th:text="${convt.user2}"></td>
+        </tr>
+        </tbody>
+    </table>
+</th:block>
+<br>
+<br>
+
+<div class="container" style="margin-top:100px">
+
+    <p>User name:
+        <span sec:authentication="principal.username"> User</span><br>
+        <span sec:authentication="name"></span><br>
+    </p>
+
+
+    <p>Last name:
+        <b>[[${#request.userPrincipal.principal.fullName}]]</b>
+
+        <span sec:authentication="principal.fullName"></span><br>
+    </p>
+
+    <p>Img:
+        <b>[[${#request.userPrincipal.principal.userImg}]]</b>
+    </p>
+    <p>pass:
+        <span sec:authentication="principal.password"></span><br>
+    </p>
+    <p>dateOfBirth:
+        <span sec:authentication="principal.dateOfBirth"></span><br>
+    </p>
+    <p>gender:
+        <span sec:authentication="principal.gender"></span><br>
+    </p>
+    <p>email:
+        <span sec:authentication="principal.email"></span><br>
+    </p>
+    <p>id:
+        <span sec:authentication="principal.id"></span><br>
+    </p>
+    <p>created at:
+            <span sec:authentication="principal.createdAt"></span><br>
+    </p>
+
+
+
+
+    Roles: <span sec:authentication="principal.authorities"></span><br>
+</div>
+</body>
+</html>

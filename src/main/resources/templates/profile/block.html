@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{:: title},
+                                                ~{:: #static-resources},
+                                                ~{:: #header},
+                                                ~{:: #main},
+                                                ~{:: #footer},
+                                                ~{:: #script}
+                                               )}">
+<head>
+    <title>Edit </title>
+</head>
+<body>
+
+<header id="header" th:insert="~{/fragments/app-fragments :: nav-default}">
+    menu
+</header>
+
+<div class="block" id="main" style="margin-top:50px">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h3>User not found</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block id="script">
+    <script type="text/javascript">
+
+
+    </script>
+</th:block>
+</body>
+</html>

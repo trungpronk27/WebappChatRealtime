@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{:: title},
+                                                ~{:: #static-resources},
+                                                ~{:: #header},
+                                                ~{:: #main},
+                                                ~{:: #footer},
+                                                ~{:: #script}
+                                               )}">
+<head>
+    <title>Edit - [[${#request.userPrincipal.principal.fullName}]]</title>
+</head>
+<body>
+
+<header id="header" th:insert="~{/fragments/app-fragments :: nav-default}">
+    menu
+</header>
+
+<div class="edit-profile" id="main" style="margin-top:50px">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <ul>
+                    <li><a th:href="@{/profile/} + ${#request.userPrincipal.principal.id} + @{/edit}" >Edit Profile</a></li>
+                    <li><a th:href="@{/changePassword/} + ${#request.userPrincipal.principal.id} + @{/edit}" >Change Password</a></li>
+                    <li><a th:href="@{/listBlock/} + ${#request.userPrincipal.principal.id} + @{/edit}" class="active">List Block</a></li>
+                </ul>
+            </div>
+            <div class="col-md-9 info">
+
+                <th:block th:if="${#lists.isEmpty(listBlock)}">
+                    <h5>No Block List </h5>
+                </th:block>
+
+                <th:block th:unless="${#lists.isEmpty(listBlock)}">
+                    <div th:each="block : ${listBlock}">
+                        <span th:text="${block.friend_reply.lastName} +' '+ ${block.friend_reply.firstName}"></span>
+                        <form th:action="@{/unBlock/} + ${block.id}+'/'+${#request.userPrincipal.principal.id} " th:object="${update}" method="post" style="display:inline">
+                            <input type="hidden" name="friend_send" th:value="${block.friend_send.id}"/>
+                            <input type="hidden" name="friend_reply" th:value="${block.friend_reply.id}"/>
+                            <button class="btn btn-outline-primary"> Bỏ chặn</button>
+                        </form>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block id="script">
+    <script type="text/javascript">
+
+
+    </script>
+</th:block>
+</body>
+</html>

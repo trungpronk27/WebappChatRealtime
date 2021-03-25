@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{:: title},
+                                                ~{:: #static-resources},
+                                                ~{:: #header},
+                                                ~{:: #main},
+                                                ~{:: #footer},
+                                                ~{:: #script}
+                                               )}">
+
+<head>
+    <title>Add</title>
+<!--    <th:block id="static-resources"></th:block>-->
+
+</head>
+<body>
+
+<header id="header" th:insert="~{/fragments/app-fragments :: nav-default}">
+    Home Nav
+</header>
+
+<div id="main" class="container">
+    <h2>Add Employee</h2>
+    <form action="#" th:action="@{/employee}" th:object="${employee}" method="POST">
+        <input type="text" th:field="*{firstName}" placeholder="Employee First Name" class="form-control mb-4 col-4" autocomplete="off">
+
+        <input type="text" th:field="*{lastName}" placeholder="Employee Last Name" class="form-control mb-4 col-4" autocomplete="off">
+
+        <input type="text" th:field="*{email}" placeholder="Employee Email" class="form-control mb-4 col-4" autocomplete="off">
+
+        <button type="submit" class="btn btn-info col-2"> Save Employee</button>
+    </form>
+</div>
+
+
+<!--<div id="footer" th:replace="~{/fragments/app-fragments :: copyright}">-->
+<!--    Footer-->
+<!--</div>-->
+
+</body>
+</html>

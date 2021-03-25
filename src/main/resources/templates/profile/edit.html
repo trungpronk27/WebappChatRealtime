@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{:: title},
+                                                ~{:: #static-resources},
+                                                ~{:: #header},
+                                                ~{:: #main},
+                                                ~{:: #footer},
+                                                ~{:: #script}
+                                               )}">
+<head>
+    <title>Edit - [[${#request.userPrincipal.principal.fullName}]]</title>
+</head>
+<body>
+
+<header id="header" th:insert="~{/fragments/app-fragments :: nav-default}">
+    menu
+</header>
+
+<div class="edit-profile" id="main" style="margin-top:50px">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <ul>
+                    <li><a th:href="@{/profile/} + ${#request.userPrincipal.principal.id} + @{/edit}" class="active" >Edit Profile</a></li>
+                    <li><a th:href="@{/profile/} + ${#request.userPrincipal.principal.id} + @{/changePassword}" >Change Password</a></li>
+                    <li><a th:href="@{/listBlock/} + ${#request.userPrincipal.principal.id} + @{/edit}" >List Block</a></li>
+                </ul>
+            </div>
+            <div class="col-md-9 info">
+                <form th:action="@{/profile/} + ${#request.userPrincipal.principal.id} + @{/edit}" th:object="${edit}" method="post" enctype="multipart/form-data">
+
+
+                    <div th:if="${isExist}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong class="errors" th:text="${isExist}"></strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong class="errors" th:text="${success}"></strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <input type="hidden" th:field="*{id}"/>
+                    <input type="hidden" th:field="*{password}"/>
+                    <input type="hidden" th:field="*{username}"/>
+                    <input type="hidden" th:field="*{userImg}"/>
+
+                    <div class="row">
+                        <div class="form-group col">
+                            <label class="form-label">
+                                Last Name
+                            </label>
+                            <input type="text" th:field="*{lastName}" class="form-control"
+                                   placeholder="Last Name"  autocomplete="off" >
+                            <span class="errors" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
+                        </div>
+
+                        <div class="form-group col">
+                            <label class="form-label">
+                                 First Name
+                            </label>
+                            <input type="text" th:field="*{firstName}" class="form-control"
+                                   placeholder="First Name"  autocomplete="off" >
+                            <span class="errors" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col">
+                            <label class="form-label">
+                                Email
+                            </label>
+                            <input type="email" th:field="*{email}" class="form-control"
+                                   placeholder="Email"  autocomplete="off" >
+                            <span class="errors" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+                        </div>
+
+                        <div class="form-group col">
+                            <label class="form-label">
+                                Date of birth
+                            </label>
+                            <input type="date" th:field="*{dateOfBirth}" class="form-control"
+                                   placeholder="Date of birth"  autocomplete="off" >
+                            <span class="errors" th:if="${#fields.hasErrors('dateOfBirth')}" th:errors="*{dateOfBirth}"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Gender
+                        </label>
+                        <select class="form-control" th:field="*{gender}">
+                            <option th:value="0" th:text="Male"></option>
+                            <option th:value="1" th:text="Female"></option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary button">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block id="script">
+    <script type="text/javascript">
+
+
+    </script>
+</th:block>
+</body>
+</html>

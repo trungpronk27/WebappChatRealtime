@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{:: title},
+                                                ~{:: #static-resources},
+                                                ~{:: #header},
+                                                ~{:: #main},
+                                                ~{:: #footer},
+                                                ~{:: #script}
+                                               )}">
+<head>
+    <title>Add member</title>
+</head>
+<body>
+
+<header id="header" th:insert="~{/fragments/app-fragments :: nav-default}">
+    menu
+</header>
+
+<div class="chat" id="main">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="d-sm-none d-md-block col-md-4 col-lg-4 col-xl-3">
+                <div class="sidebar" style="height: 90vh;">
+                    <div class="search">
+                        <input type="text" class="form-control" readonly>
+                    </div>
+                    <div class="content">
+                        <div class="member">
+                            <a th:href="@{/group/} + ${group.id} + @{/mess}" th:id="${group.id}">
+                                <th:block th:if="${group.groupImg == null}">
+                                    <img class="avatar-img" alt="" src="/img/avatars/default.jpg" data-img="">
+                                </th:block>
+
+                                <th:block th:if="${group.groupImg != null}">
+                                    <img class="avatar-img" th:src="@{'/img/avatars/' +${group.groupImg}}" alt="" >
+                                </th:block>
+
+                                <div class="status">
+                                    <i class="fas fa-circle"></i>
+                                </div>
+                                <div class="data">
+                                    <h5 class="name" th:text="${group.groupName}"></h5>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8 col-lg-8 col-xl-9">
+                <div class="sidebar" style="height: 90vh;" th:fragment="sidebar">
+                    <div class="search">
+                        <form th:action="@{/group/add/}+${group.id}" method="post">
+                            <input type="text" class="form-control" name="key" placeholder="Search member" required>
+                        </form>
+                        <br>
+                        <div th:if="${param.isExist}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong class="errors" th:text="${param.isExist}"></strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        <br>
+                        <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong class="errors" th:text="${param.success}"></strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    </div>
+
+                    <div class="content">
+                        <div class="member" th:each="user : ${list}">
+                            <a href="#" th:id="${user.id}" th:data-name="${user.lastName} +' '+ ${user.firstName}">
+                                <img class="avatar-img" th:src="@{'/img/avatars/' +${user.userImg}}" alt="" >
+                                <div class="data">
+                                    <h5 class="name" th:text="${user.lastName} +' '+ ${user.firstName}"></h5>
+                                    <form class="date-send" th:action="@{/group/add/member/}+ ${group.id}+ '/' + ${user.id}" method="post" th:object="${add}">
+                                        <button class="btn btn-success">
+                                            Add
+                                        </button>
+                                    </form>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block id="script">
+    <script type="text/javascript">
+        $(document).ready(function(){
+        	$(".nav #group").addClass("active");
+        });
+    </script>
+</th:block>
+</body>
+</html>

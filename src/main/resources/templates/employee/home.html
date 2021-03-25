@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{:: title},
+                                                ~{:: #static-resources},
+                                                ~{:: #header},
+                                                ~{:: #main},
+                                                ~{:: #footer},
+                                                ~{:: #script}
+                                               )}">
+<head>
+    <title>Home</title>
+<!--    <th:block id="static-resources"> </th:block>-->
+
+</head>
+<body>
+
+
+<header id="header" th:insert="~{/fragments/app-fragments :: nav-default}">
+    menu
+</header>
+
+<div id="main" class="container">
+    <div align="center">
+        <h1>Employee list</h1>
+
+        <a th:href="@{/showNewEmployeeForm}" class="btn btn-primary">Add</a>
+
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <form class="form-inline" action="#" th:action="@{/employee/search}" method="get">
+            <input class="form-control mr-sm-2" type="search" name="term" placeholder="Search by name ..." />
+            <button class="btn btn-primary" type="submit">
+                <i class="fa fa-search"></i> Search
+            </button>
+        </form>
+
+        <th:block th:if="${#lists.isEmpty(listEmp)}">
+            <h5>No contacts</h5>
+        </th:block>
+
+        <th:block th:unless="${#lists.isEmpty(listEmp)}">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="employee,iterStat : ${listEmp}">
+                        <th scope="row" th:text="${iterStat.count}"></th>
+                        <td th:text="${employee.firstName}"></td>
+                        <td th:text="${employee.lastName}"></td>
+                        <td th:text="${employee.email}"></td>
+                        <td>
+                            <a th:href="@{/showFormUpdate/{id}(id=${employee.id})}" class="btn btn-primary">Update</a>
+                            <form action="#" th:action="@{/delete/{id}(id=${employee.id})}" method="post" style="display:inline-block">
+                                <button type="submit" class="btn btn-danger">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </th:block>
+    </div>
+</div>
+
+
+<th:block id="script">
+<script type="text/javascript">
+
+
+
+    </script>
+</th:block>
+
+</body>
+</html>

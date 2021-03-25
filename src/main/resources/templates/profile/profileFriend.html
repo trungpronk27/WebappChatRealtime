@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{:: title},
+                                                ~{:: #static-resources},
+                                                ~{:: #header},
+                                                ~{:: #main},
+                                                ~{:: #footer},
+                                                ~{:: #script}
+                                               )}">
+<head>
+    <title>Profile - [[${profile.lastName} +' '+ ${profile.firstName }]]</title>
+</head>
+<body>
+
+<header id="header" th:insert="~{/fragments/app-fragments :: nav-default}">
+    menu
+</header>
+
+<div class="profile" id="main">
+    <div class="container">
+        <div class="row header">
+            <div class="col-md-3 avatar" style="text-align: center;">
+                <th:block th:if="${profile.userImg == null}" >
+                    <img class="" th:src="@{../img/avatars/default.jpg}" alt="">
+                </th:block>
+
+                <th:block th:if="${profile.userImg != null}">
+                    <img class="" th:src="@{'/img/avatars/' + ${profile.userImg}}" alt="">
+                </th:block>
+
+            </div>
+            <div class="col-md-9 info">
+                <div class="name">
+                    <h3 th:text="${profile.lastName} +' '+ ${profile.firstName }"></h3>
+                </div>
+                <div class="count">
+                    <ul>
+                        <li>
+                            <b>0</b> post
+                        </li>
+                        <li>
+                            <a href="#">
+                                <b th:text="${count}">1</b>
+                                friend
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="edit">
+
+                    <th:block th:if="${#lists.isEmpty(status)}">
+                        <form th:action="@{/addFriend/} + ${profile.id}" th:object="${friend}" method="post" style="display:inline">
+                            <input type="hidden" th:value="${profile.id}" id="friend_reply" name="friend_reply" />
+                            <input type="hidden" th:value="${#request.userPrincipal.principal.id}" id="friend_send" name="friend_send"/>
+                            <button class="btn btn-primary"> Gửi kết bạn </button>
+                        </form>
+                    </th:block>
+
+                    <th:block th:unless="${#lists.isEmpty(status)}">
+                        <th:block th:switch="${status.status}">
+                            <th:block th:case="0">
+                                <form th:action="@{/addFriends/} + ${profile.id}" th:object="${update}" method="post" style="display:inline">
+                                    <input type="hidden" th:field="*{id}"/>
+                                    <input type="hidden" th:field="*{friend_send}"/>
+                                    <input type="hidden" th:field="*{friend_reply}"/>
+                                    <button class="btn btn-primary"> Gửi kết bạn </button>
+                                </form>
+                            </th:block>
+
+                            <th:block th:case="1">
+                                <th:block th:if="${status.friend_send.id} == ${#request.userPrincipal.principal.id}">
+                                    <form th:action="@{/cancelFriend/} + ${profile.id}" th:object="${update}" method="post" style="display:inline">
+                                        <input type="hidden" th:field="*{id}"/>
+                                        <input type="hidden" th:field="*{friend_send}"/>
+                                        <input type="hidden" th:field="*{friend_reply}"/>
+                                        <button class="btn btn-primary"> Huỷ lời mời </button>
+                                    </form>
+                                </th:block>
+
+                                <th:block th:if="${status.friend_send.id} != ${#request.userPrincipal.principal.id}">
+                                    <form th:action="@{/confirmFriend/} + ${profile.id}" th:object="${update}" method="post" style="display:inline">
+                                        <input type="hidden" th:field="*{id}"/>
+                                        <input type="hidden" th:field="*{friend_send}"/>
+                                        <input type="hidden" th:field="*{friend_reply}"/>
+                                        <button class="btn btn-primary"> Xác nhận lời mời </button>
+                                    </form>
+                                </th:block>
+                            </th:block>
+
+                            <th:block th:case="2">
+                                <div class="dropdown" style="display:inline">
+                                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Đã là bạn bè
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdown">
+                                        <li data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                            <a class="dropdown-item" href="#">Huỷ kết bạn</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!-- Modal huỷ kết bạn -->
+                                <div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Hủy kết bạn với [[${profile.lastName} +' '+ ${profile.firstName }]]</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Bạn có chắc chắn muốn xóa [[${profile.lastName} +' '+ ${profile.firstName }]] khỏi danh sách bạn bè không?
+                                            </div>
+                                            <form th:action="@{/cancelFriend/} + ${profile.id}" th:object="${update}" method="post">
+                                                <div class="modal-footer">
+                                                    <input type="hidden" th:field="*{id}"/>
+                                                    <input type="hidden" th:field="*{friend_send}"/>
+                                                    <input type="hidden" th:field="*{friend_reply}"/>
+
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Save</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </th:block>
+                        </th:block>
+                    </th:block>
+
+                    <div class="dropdown" style="display:inline">
+                        <button role="button" type="button" class="btn dropdown" data-toggle="dropdown" id="dropdownBlock" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownBlock">
+                            <li data-bs-toggle="modal" data-bs-target="#block">
+                                <a class="dropdown-item" href="#">Chặn</a>
+                            </li>
+                        </ul>
+
+                        <!-- Modal -->
+                        <div class="modal" id="block" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Chặn [[${profile.lastName} +' '+ ${profile.firstName }]]</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+<!--                                        Hải sẽ không thể:-->
+<!--                                        Xem bài viết trên dòng thời gian của bạn-->
+<!--                                        Gắn thẻ bạn-->
+<!--                                        Mời bạn tham gia sự kiện hoặc nhóm-->
+<!--                                        Nhắn tin cho bạn-->
+<!--                                        Thêm bạn làm bạn bè-->
+<!--                                        Nếu các bạn là bạn bè, việc chặn Hải cũng sẽ hủy kết bạn với anh ấy.-->
+<!--                                        Nếu bạn chỉ muốn giới hạn nội dung mình chia sẻ với Hải hoặc ẩn bớt nội dung về anh ấy trên Facebook, bạn có thể giảm tương tác với anh ấy.-->
+
+                                    </div>
+                                    <form th:action="@{/blockFriend/}" th:object="${update}" method="post">
+                                        <div class="modal-footer">
+                                            <input type="hidden" th:field="*{id}"/>
+                                            <input type="hidden" th:field="*{friend_send}"/>
+                                            <input type="hidden" th:field="*{friend_reply}"/>
+
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Save</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main">
+            <div class="tab-item">
+                <ul>
+                    <li class="active">
+                        <a href="#" >
+                            <span>Post</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="tab-content row post">
+                <div class="tab-content row post">
+                    <th:block th:if="${#lists.isEmpty(post)}">
+                        <div class="col-12 text-center">
+                            <h3>User has no posts yet</h3>
+                        </div>
+                    </th:block>
+
+                    <th:block th:unless="${#lists.isEmpty(post)}" th:each="contentPost : ${post}">
+                        <div class="col-4 post-item" data-bs-toggle="modal" data-bs-target="#showPost">
+                            <img id="img-post" th:src="@{'/img/posts/' + ${contentPost.postImg}}" alt="">
+                            <input type="hidden" th:value="${contentPost.postText}">
+                            <input type="hidden" class="date" th:value="${#dates.format(contentPost.updatedAt, 'dd-MMM-yyyy')}">
+                        </div>
+                    </th:block>
+
+                    <!-- Modal -->
+                    <div class="modal" id="showPost" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-xl modal-dialog-centered">
+                            <div class="modal-content">
+
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-lg-8">
+                                            <img th:id="view-img" src="" alt="" style="width:100%">
+                                        </div>
+
+                                        <div class="col-lg-4" style="position: relative;">
+                                            <div class="modal-header" style="justify-content: end;">
+                                                <img class="avatar-img" th:src="@{'/img/avatars/' + ${profile.userImg}}">
+                                                <b class="modal-title" th:text="${profile.lastName} +' '+ ${profile.firstName}"> </b>
+                                            </div>
+
+                                            <div class="modal-header" style="justify-content: end; border-bottom:none">
+                                                <img class="avatar-img" th:src="@{'/img/avatars/' + ${profile.userImg}}">
+                                                <b class="modal-title" th:text="${profile.lastName} +' '+ ${profile.firstName}" style="margin-right:10px"> </b>
+                                                <p id="post-text" class="modal-title"></p>
+                                            </div>
+                                            <div class="modal-body" style="overflow-y: auto;">
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <p id="post-date" class="modal-title"></p>
+                                                <input type="text" placeholder="Add a comment" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<th:block id="script">
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $(".post-item").click(function(){
+                var img = $(this).find("img").attr('src');
+                $("#view-img").attr('src', img);
+
+                var text = $(this).find("input").val();
+                $("#post-text").text(text);
+
+                var date = $(this).find(".date").val();
+                $("#post-date").text(date);
+            });
+
+        });
+
+    </script>
+</th:block>
+</body>
+</html>
